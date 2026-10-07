@@ -12,7 +12,7 @@ import sc.shared.SharedConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-
+//dhahfa
 /**
  * Hauptklasse des Clients, die über Konsolenargumente gesteuert werden kann.
  * Sie veranlasst eine Verbindung zum Spielserver.
