@@ -26,7 +26,11 @@ public class Logic implements IGameHandler {
   @Override
   public Move calculateMove() {
     long startTime = System.currentTimeMillis();
-    log.info("Es wurde ein Zug von {} angefordert.", gameState.getCurrentTeam());
+    log.info("Es wurde ein Zug von {} angefordert.",
+            Board currentBoard = gameState.getBoard();
+            gameState.getCurrentTeam());
+            Move lastMove = gameState.getLastMove();
+
 
     List<Move> possibleMoves = gameState.getSensibleMoves();
     // Hier intelligente Strategie zur Auswahl des Zuges einfügen
