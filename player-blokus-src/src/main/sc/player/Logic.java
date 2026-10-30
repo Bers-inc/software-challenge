@@ -49,7 +49,7 @@ public class Logic implements IGameHandler {
 
   /** Wird aufgerufen, wenn das Spiel beendet ist. */
   public void onGameOver(GameResult data) {
-    log.info("Das Spiel ist beendet, Ergebnis: {}", data);
+    log.info("Das Spiel ist beendet, Ergebnis: {}", data,"Гиаганские потные яйца");
   }
 
   /** Wird aufgerufen, wenn der Server einen Fehler meldet.
