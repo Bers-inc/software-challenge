@@ -1,3 +1,4 @@
+
 package sc.player;
 
 import org.slf4j.Logger;
@@ -8,54 +9,81 @@ import sc.plugin2027.GameState;
 import sc.shared.GameResult;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Das Herz des Clients:
- * Eine simple Logik, die zufaellige gueltige Zuege macht.
- * <p>
- * Ausserdem werden zum Spielverlauf Konsolenausgaben gemacht.
+ * Einfache Blokus-Strategie:
+ * Wählt zufällig einen gültigen Zug aus.
  */
 public class Logic implements IGameHandler {
+
   private static final Logger log = LoggerFactory.getLogger(Logic.class);
 
   /** Aktueller Spielstatus. */
   private GameState gameState;
 
-  /** In dieser Methode habt ihr 2 Sekunden (berechnet etwas Puffer ein) Zeit,
-   * um euren nächsten Zug zu planen. */
+  /**
+   * Berechnet den nächsten Zug.
+   */
   @Override
   public Move calculateMove() {
+
     long startTime = System.currentTimeMillis();
+
     log.info("Es wurde ein Zug von {} angefordert.",
-            Board currentBoard = gameState.getBoard();
             gameState.getCurrentTeam());
-            Move lastMove = gameState.getLastMove();
 
-
+    // Alle gültigen Züge nach den Blokus-Regeln abrufen
     List<Move> possibleMoves = gameState.getSensibleMoves();
-    // Hier intelligente Strategie zur Auswahl des Zuges einfügen
-    Move move = possibleMoves.get((int) (Math.random() * possibleMoves.size()));
 
-    log.info("Sende {} nach {}ms.", move, System.currentTimeMillis() - startTime);
+    // Prüfen, ob noch gültige Züge vorhanden sind
+    if (possibleMoves == null || possibleMoves.isEmpty()) {
+      log.warn("Keine gültigen Züge mehr vorhanden!");
+      return null;
+    }
+
+    // Zufälligen gültigen Zug auswählen
+    int randomIndex = ThreadLocalRandom.current()
+            .nextInt(possibleMoves.size());
+
+    Move move = possibleMoves.get(randomIndex);
+
+    log.info("Aus {} möglichen Zügen wurde {} ausgewählt.",
+            possibleMoves.size(), move);
+
+    log.info("Sende Zug nach {}ms.",
+            System.currentTimeMillis() - startTime);
+
     return move;
   }
 
-  /** Ein neuer Spielstatus ist verfügbar, d.h. ein Zug wurde erfolgreich ausgeführt. */
+  /**
+   * Ein neuer Spielstatus ist verfügbar.
+   */
   @Override
   public void onUpdate(IGameState gameState) {
+
     this.gameState = (GameState) gameState;
-    log.info("Zug: {} Dran: {}", gameState.getTurn(), gameState.getCurrentTeam());
+
+    log.info("Zug: {} | Dran: {}",
+            gameState.getTurn(),
+            gameState.getCurrentTeam());
   }
 
-  /** Wird aufgerufen, wenn das Spiel beendet ist. */
+  /**
+   * Das Spiel ist beendet.
+   */
   public void onGameOver(GameResult data) {
-    log.info("Das Spiel ist beendet, Ergebnis: {}", data,"Гиаганские потные яйца");
+
+    log.info("Das Spiel ist beendet, Ergebnis: {}", data);
   }
 
-  /** Wird aufgerufen, wenn der Server einen Fehler meldet.
-   * Bedeutet auch den Abbruch des Spiels. */
+  /**
+   * Der Server hat einen Fehler gemeldet.
+   */
   @Override
   public void onError(String error) {
+
     log.warn("Fehler: {}", error);
   }
 }
