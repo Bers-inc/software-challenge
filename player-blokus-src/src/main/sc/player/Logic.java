@@ -29,6 +29,7 @@ public class Logic implements IGameHandler {
   public Move calculateMove() {
 
     long startTime = System.currentTimeMillis();
+    Move currentBest = null;
 
     log.info("Es wurde ein Zug von {} angefordert.",
             gameState.getCurrentTeam());
@@ -40,6 +41,11 @@ public class Logic implements IGameHandler {
     if (possibleMoves == null || possibleMoves.isEmpty()) {
       log.warn("Keine gültigen Züge mehr vorhanden!");
       return null;
+    } else {
+      for (Move a : possibleMoves){
+        //Hier Bewertungsmatrix
+
+      }
     }
 
     // Zufälligen gültigen Zug auswählen
@@ -54,7 +60,7 @@ public class Logic implements IGameHandler {
     log.info("Sende Zug nach {}ms.",
             System.currentTimeMillis() - startTime);
 
-    return move;
+    return currentBest;
   }
 
   /**
