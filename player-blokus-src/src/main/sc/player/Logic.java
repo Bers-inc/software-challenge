@@ -6,9 +6,6 @@ import sc.api.plugins.IGameState;
 import sc.plugin2027.Move;
 import sc.plugin2027.GameState;
 import sc.shared.GameResult;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 import java.util.List;
 
@@ -28,39 +25,19 @@ public class Logic implements IGameHandler {
    * um euren nächsten Zug zu planen. */
   @Override
   public Move calculateMove() {
-    long start = System.currentTimeMillis();
-    long stage1Deadline = start + 1000;
-    long stage2Deadline = start + 1600;
+    long startTime = System.currentTimeMillis();
+    log.info("Es wurde ein Zug von {} angefordert.",
+            Board currentBoard = gameState.getBoard();
+            gameState.getCurrentTeam());
+            Move lastMove = gameState.getLastMove();
 
-    var me = gameState.getCurrentTeam();
-    List<Move> moves = gameState.getSensibleMoves();
-    int base = Arrays.stream(gameState.getPointsForTeam(me)).sum();
 
-    // 1) ходы с максимальным приростом очков
-    // 1) Züge mit den Höhster Punkte Zahl
-    int maxGain = -1;
-    List<Move> best = new ArrayList<>();
-    for (Move m : moves) {
-      int gain = Arrays.stream(gameState.performMove(m).getPointsForTeam(me)).sum() - base;
-      if (gain > maxGain) { maxGain = gain; best.clear(); }
-      if (gain == maxGain) best.add(m);
-      if (System.currentTimeMillis() > stage1Deadline) break;
-    }
+    List<Move> possibleMoves = gameState.getSensibleMoves();
+    // Hier intelligente Strategie zur Auswahl des Zuges einfügen
+    Move move = possibleMoves.get((int) (Math.random() * possibleMoves.size()));
 
-    // 2) среди них - тот, после которого у соперника меньше ходов
-    // 2) aus allen zügen wehlt es die, die den Gegner Blockieren
-    Collections.shuffle(best);
-    Move choice = best.get(0);
-    List<Move> best2 = new ArrayList<>();
-    int minOpponentMoves = Integer.MAX_VALUE;
-    for (Move m : best) {
-      if (System.currentTimeMillis() > stage2Deadline) break;
-      int opp = gameState.performMove(m).getSensibleMoves().size();
-      if (opp < minOpponentMoves) { minOpponentMoves = opp; choice = m; }
-    }
-
-    log.info("Sende {} (+{} Punkte) nach {}ms.", choice, maxGain, System.currentTimeMillis() - start);
-    return choice;
+    log.info("Sende {} nach {}ms.", move, System.currentTimeMillis() - startTime);
+    return move;
   }
 
   /** Ein neuer Spielstatus ist verfügbar, d.h. ein Zug wurde erfolgreich ausgeführt. */
